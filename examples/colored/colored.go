@@ -1,4 +1,4 @@
-package colored
+package main
 
 import (
 	"fmt"

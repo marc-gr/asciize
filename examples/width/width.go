@@ -1,4 +1,4 @@
-package width
+package main
 
 import (
 	"fmt"
