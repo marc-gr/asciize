@@ -2,26 +2,29 @@ language: go
 
 go:
   - 1.8.x
-  - tip
 
 install:
   - go get -t ./...
   - go get -u gopkg.in/alecthomas/gometalinter.v1
   - gometalinter.v1 --install --force
+  - go get -u github.com/mitchellh/gox
 
 script:
+  - export BUILD_VERSION=${TRAVIS_TAG:-0.0.0-dev}+${TRAVIS_BUILD_NUMBER}.${TRAVIS_COMMIT:0:7}
   - gometalinter.v1 --vendor -t --vendored-linters --deadline=2m --config .gometalinter.json ./...
   - go test -v ./...
-  - CGO_ENABLED=0 go build -o asciize --ldflags "-extldflags \"-static\" -X main.BuildVersion=${TRAVIS_TAG:-0.0.0-dev}+${TRAVIS_BUILD_NUMBER}.${TRAVIS_COMMIT:0:7}" ./cmd/asciize
-  - sha1sum asciize > asciize.sha1
+  - gox -verbose -arch="386 amd64" -os="linux darwin freebsd openbsd netbsd solaris windows" -ldflags="-v -w -X main.BuildVersion=${BUILD_VERSION}" -output="dist/{{.OS}}_{{.Arch}}/asciize" ./cmd/asciize
+  - mv -v dist asciize-${BUILD_VERSION}
+  - tar zcvf asciize-${BUILD_VERSION}.tar.gz asciize-${BUILD_VERSION}
+  - sha1sum asciize-${BUILD_VERSION}.tar.gz > asciize-${BUILD_VERSION}.tar.gz.sha1
 
 deploy:
   provider: releases
   api_key:
     secure: WkKykF+H3MB8O3vTWo7QvDr6lQpsaTHJ2qNc+kTlHRSG6/j0KITfoPTDlh2pbcSgknYRbfoqoYPLEMCTWGXov3fnkcfjjdnpRjSgnMxu2UsmOa9/4Ogj4/XJ4Z4qDHAUazszg4OlEA41Zs9DSk5jmQEgMue2Nf5hziVX2kT8yFWAddGuLF2JfG6T0Xc/CaPcJ8RpiYEn7ghZ+XUT4o4QwMnbb/cxTwu4aJQ28ZaZcqthGG1ThP2TCTbbz/F9NQy7KsL1fiRknpTeFE7E0TDJ2qqElOP60FzxOnej0vTEZvqIyUaH0SjzNgE8Orbmvuz/cK3Odi/oPmf1AMylbtSpB/8Tp98GXN2HABldCsXasgO+DGeT1sBAlN2zdfV3duRfMfDvK6OXJFBaMfE6Mkexvb1grMlD5WzjigA/sKPciVwWRbee0g8pdH2HeE4D8k+IzxCbsDxjRqwZuvws4T2345z1FlFh1qZ5yFVWrsL9H72NaeS4kyQlKJP4XEVufhTgpqdnVT1/CboLXD9PBdc0mdcDPgc1HOIKJ3ky6YiN0Mb+pDGna3ax3RJRP35dyTSPRTFZXtxzM6v0544V2aYvvqPCo2dfv615YJktS7pwlqkOhvRJTPthmcybDVBrZHAdnd65uTFYes79pJLpAdMrW/OZ3vNWjhqOL83zqYS+6J8=
   file:
-    - asciize
-    - asciize.sha1
+    - asciize-${BUILD_VERSION}.tar.gz
+    - asciize-${BUILD_VERSION}.tar.gz.sha1
   skip_cleanup: true
   on:
     repo: marc-gr/asciize

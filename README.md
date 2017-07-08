@@ -10,6 +10,8 @@
 
 ## Installation
 
+If you want to install the binary, just go to the [releases](https://github.com/marc-gr/asciize/releases) page and download the latest available for your system.
+
 If you have go installed:
 
 To install only the cli:
