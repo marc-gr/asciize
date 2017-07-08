@@ -1,4 +1,4 @@
-package main
+package inverted
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	a := asciize.NewAsciizer(asciize.Format(asciize.FormatHTML))
+	a := asciize.NewAsciizer(asciize.InvertCharset(true), asciize.Colored)
 	s, err := a.Asciize(img)
 	if err != nil {
 		panic(err)

@@ -1,4 +1,4 @@
-package main
+package html
 
 import (
 	"fmt"
@@ -14,10 +14,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	a := asciize.NewAsciizer(
-		asciize.Width(50),
-		asciize.Charset([]byte("|<.>?=+*&@±^")),
-	)
+	a := asciize.NewAsciizer(asciize.Format(asciize.FormatHTML))
 	s, err := a.Asciize(img)
 	if err != nil {
 		panic(err)

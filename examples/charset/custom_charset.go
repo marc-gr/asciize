@@ -1,4 +1,4 @@
-package main
+package charset
 
 import (
 	"fmt"
@@ -14,7 +14,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	a := asciize.NewAsciizer(asciize.Colored(true))
+	a := asciize.NewAsciizer(
+		asciize.Width(50),
+		asciize.Charset([]byte("|<.>?=+*&@±^")),
+	)
 	s, err := a.Asciize(img)
 	if err != nil {
 		panic(err)
