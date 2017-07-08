@@ -1,0 +1,13 @@
+{
+  "DisableAll": true,
+  "Enable": [
+    "unconvert",
+    "vet",
+    "gofmt",
+    "misspell",
+    "goconst",
+    "goimports",
+    "deadcode",
+    "ineffassign"
+  ]
+}
