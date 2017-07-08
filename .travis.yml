@@ -1,0 +1,37 @@
+language: go
+
+go:
+  - 1.8.x
+  - tip
+
+install:
+  - go get -t ./...
+  - go get github.com/client9/misspell/cmd/misspell
+  - go get github.com/golang/lint/golint
+  - go get honnef.co/go/staticcheck/cmd/staticcheck
+  - go get github.com/kisielk/errcheck
+
+script:
+  - diff <(echo -n) <(gofmt -s -d .)
+  - misspell -error .
+  - go vet ./...
+  - golint ./...
+  - staticcheck ./...
+  - errcheck ./...
+  - go test -v ./...
+  - CGO_ENABLED=0 go build --ldflags "-extldflags \"-static\" -X main.BuildVersion=${TRAVIS_TAG:-0.0.0-dev}+${TRAVIS_BUILD_NUMBER}.${TRAVIS_COMMIT:0:7}"
+  - sha1sum asciize > asciize.sha1
+
+deploy:
+  provider: releases
+  api_key:
+    secure: WkKykF+H3MB8O3vTWo7QvDr6lQpsaTHJ2qNc+kTlHRSG6/j0KITfoPTDlh2pbcSgknYRbfoqoYPLEMCTWGXov3fnkcfjjdnpRjSgnMxu2UsmOa9/4Ogj4/XJ4Z4qDHAUazszg4OlEA41Zs9DSk5jmQEgMue2Nf5hziVX2kT8yFWAddGuLF2JfG6T0Xc/CaPcJ8RpiYEn7ghZ+XUT4o4QwMnbb/cxTwu4aJQ28ZaZcqthGG1ThP2TCTbbz/F9NQy7KsL1fiRknpTeFE7E0TDJ2qqElOP60FzxOnej0vTEZvqIyUaH0SjzNgE8Orbmvuz/cK3Odi/oPmf1AMylbtSpB/8Tp98GXN2HABldCsXasgO+DGeT1sBAlN2zdfV3duRfMfDvK6OXJFBaMfE6Mkexvb1grMlD5WzjigA/sKPciVwWRbee0g8pdH2HeE4D8k+IzxCbsDxjRqwZuvws4T2345z1FlFh1qZ5yFVWrsL9H72NaeS4kyQlKJP4XEVufhTgpqdnVT1/CboLXD9PBdc0mdcDPgc1HOIKJ3ky6YiN0Mb+pDGna3ax3RJRP35dyTSPRTFZXtxzM6v0544V2aYvvqPCo2dfv615YJktS7pwlqkOhvRJTPthmcybDVBrZHAdnd65uTFYes79pJLpAdMrW/OZ3vNWjhqOL83zqYS+6J8=
+  file:
+    - asciize
+    - asciize.sha1
+  skip_cleanup: true
+  on:
+    repo: marc-gr/asciize
+    tags: true
+
+
