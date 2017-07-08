@@ -1,4 +1,4 @@
-// package asciize provides methods and types to transform images to ASCII art.
+// Package asciize provides methods and types to transform images to ASCII art.
 package asciize
 
 import (
@@ -15,6 +15,7 @@ import (
 	"github.com/nfnt/resize"
 )
 
+// OutputFormat represents a supported output format. i.e.: text, html
 type OutputFormat string
 
 const (

@@ -18,6 +18,7 @@ import (
 	_ "image/png"
 )
 
+// BuildVersion is the version of the binary. It is automatically filled by the build step.
 var BuildVersion = "dev"
 
 func main() {
