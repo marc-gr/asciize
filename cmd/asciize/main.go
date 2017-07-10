@@ -26,13 +26,11 @@ func main() {
 	a := asciize.NewAsciizer(opts...)
 
 	var m image.Image
-	var err error
-
 	// We check if it is a URL
-	switch _, err = url.ParseRequestURI(src); err {
-	case nil:
+	u, err := url.ParseRequestURI(src)
+	if err == nil && u.Host != "" {
 		m, err = imageFromURL(src)
-	default:
+	} else {
 		m, err = imageFromFile(src)
 	}
 
