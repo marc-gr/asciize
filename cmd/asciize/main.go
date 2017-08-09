@@ -73,9 +73,11 @@ func parseFlags() (src string, opts []asciize.Option) {
 	f := flag.String("f", "text", "Output format. Can be \"text\" or \"html\"")
 	w := flag.Uint("w", 100, "Target width")
 	cs := flag.String("cs", string(asciize.DefaultCharset()), "Used to define a custom charset")
-	c := flag.Bool("c", false, "If set to true the output will be colored (ANSI or HTML)")
-	i := flag.Bool("i", false, "If set to true the charset will be reversed. Can improve results for some images")
+	c := flag.Bool("c", false, "If set the output will be colored (ANSI or HTML)")
+	r := flag.Bool("r", false, "If set the charset will be reversed. Can improve results for some images")
 	v := flag.Bool("v", false, "Shows the build version")
+	i := flag.Bool("i", false, "If set the output file will be an image instead of a text file. Must be used with -o")
+	o := flag.String("o", "", "Output file. Will be a text file or an image based on -i")
 
 	flag.Parse()
 
@@ -90,9 +92,13 @@ func parseFlags() (src string, opts []asciize.Option) {
 	}
 
 	if src == "" {
-		fmt.Printf("\n\tmissing parameter: src parameter is required\n\n")
+		fmt.Printf("\n\tmissing parameter: -src parameter is required\n\n")
 		flag.PrintDefaults()
 		os.Exit(1)
+	}
+
+	if *i && *o == "" {
+		fmt.Printf("\n\tmissing parameter: -o parameter is required when using -i\n\n")
 	}
 
 	switch asciize.OutputFormat(*f) {
@@ -111,7 +117,9 @@ func parseFlags() (src string, opts []asciize.Option) {
 		asciize.Width(*w),
 		asciize.Charset([]byte(*cs)),
 		asciize.Colored(*c),
-		asciize.InvertCharset(*i),
+		asciize.ReverseCharset(*r),
+		asciize.ImageOutput(*i),
+		asciize.OutputFile(*o),
 	)
 
 	return

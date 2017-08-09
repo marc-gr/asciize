@@ -31,11 +31,13 @@ const (
 // Asciizer allows to transform any image into its
 // ASCII art representation with a set of configurable options.
 type Asciizer struct {
-	width         uint
-	outFmt        OutputFormat
-	colored       bool
-	charset       []byte
-	invertCharset bool
+	width          uint
+	outFmt         OutputFormat
+	colored        bool
+	charset        []byte
+	reverseCharset bool
+	imageOutput    bool
+	output         string
 }
 
 // NewAsciizer initialize a new asciizer with the given options.
@@ -76,7 +78,7 @@ func (a *Asciizer) Asciize(m image.Image) (ascii string, err error) {
 			// TODO: find a better way of weighting the index
 			i := (int(r) / len(a.charset)) % len(a.charset)
 
-			if a.invertCharset {
+			if a.reverseCharset {
 				i = len(a.charset) - 1 - i
 			}
 
@@ -133,17 +135,32 @@ func Colored(c bool) Option {
 	}
 }
 
-// InvertCharset allows to enable or disable inverted charset.
+// ReverseCharset allows to enable or disable reversed charset.
 // This can make the result clearer in some images.
-func InvertCharset(i bool) Option {
+func ReverseCharset(r bool) Option {
 	return func(a *Asciizer) {
-		a.invertCharset = i
+		a.reverseCharset = r
 	}
 }
 
 // DefaultCharset returns the default charset " .~:+=o*x^%#@$MW".
 func DefaultCharset() []byte {
 	return []byte(defaultCharset)
+}
+
+// OutputFile sets an output file. It can be a text file or an image, based
+// on the value of the image option.
+func OutputFile(o string) Option {
+	return func(a *Asciizer) {
+		a.output = o
+	}
+}
+
+// ImageOutput specifies if the output file has to be an image instead of a text file.
+func ImageOutput(i bool) Option {
+	return func(a *Asciizer) {
+		a.imageOutput = i
+	}
 }
 
 // TODO: get rid of external dependencies to quantize and color
@@ -186,4 +203,8 @@ func decorateCharacter(c string, f OutputFormat, r, g, b uint8, colored bool) st
 		return fmt.Sprintf("<span style=\"font-family: 'Lucida Console', Monaco, monospace; %s\">%s</span>", color, c)
 	}
 	return c
+}
+
+func stringToImage(s string) (image.Image, error) {
+	return nil, nil
 }
